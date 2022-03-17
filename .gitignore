@@ -2,6 +2,7 @@ __pycache__/
 .DS_store
 
 figures/
+datasets/
 
 scripts/XXX*
 scripts/.ipynb_checkpoints
