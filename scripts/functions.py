@@ -326,6 +326,43 @@ def find_mutual_nn(orig, future, k=20, n_jobs=1):
                 break
     return mnn
 
+def lighten_color(color, amount=0.5):
+    """
+    Lightens the given color by multiplying (1-luminosity) by the given amount.
+    Input can be matplotlib color string, hex string, or RGB tuple.
+    https://stackoverflow.com/questions/37765197/darken-or-lighten-a-color-in-matplotlib
 
+    """
+    import matplotlib.colors as mc
+    import colorsys
+    try:
+        c = mc.cnames[color]
+    except:
+        c = color
+    c = colorsys.rgb_to_hls(*mc.to_rgb(c))
+    
+    return colorsys.hls_to_rgb(c[0], 1 - amount * (1 - c[1]), c[2])
+
+def L1_normalise(adata):
+    # merge spliced and unspliced per cell
+    us_combined = np.concatenate((adata.layers['spliced'], adata.layers['unspliced']), axis=1)
+    # L1 normasization
+    us_combined_L2 = sk.preprocessing.normalize(us_combined, norm='l1')
+    # replace X, U and S in adata object
+    adata.layers['spliced'] = us_combined_L2[:, 0:len(adata.var_names)]
+    adata.layers['unspliced'] = us_combined_L2[:, len(adata.var_names):us_combined_L2.shape[1]]
+    adata.X = us_combined_L2[:, 0:len(adata.var_names)]
+
+    return adata
+
+def get_duplicate_row(a):
+    unq, count = np.unique(a, axis=0, return_counts=True)
+    repeated_groups = unq[count > 1]
+    drop = []
+
+    for repeated_group in repeated_groups:
+        repeated_idx = np.argwhere(np.all(a == repeated_group, axis=1))
+        drop.extend(repeated_idx.tolist()[0])
+    return drop
     
     
