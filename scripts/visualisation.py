@@ -11,7 +11,7 @@ from scipy.spatial import cKDTree
 # recovery & comparison  #
 ##########################
 
-def vector_d(v_t, v_0, metric="cosine"):
+def vector_distance(v_t, v_0, metric="cosine"):
     """Calculates the distance between two high-dimensional vectors.
     Possible distances are the cosine distance (metric="cosine")
     and the difference in vector norm (metric="norm_diff").
@@ -82,7 +82,7 @@ def get_velocity(adata, use_raw=True, key="fit", normalise=None):
 #      (UMAP & t-SNE)     #
 ###########################
 
-def project_velocities(Y_data, X_current, X_future, n_neighbors=100, row_norm=True):
+def project_velocities(Y_data, X_current, X_future, n_neighbors=100, row_norm=True, force_no_scale=False):
     """Function to project future states onto a given low-dimensional embedding.
 
     Parameters
@@ -100,11 +100,25 @@ def project_velocities(Y_data, X_current, X_future, n_neighbors=100, row_norm=Tr
         Note: select lower values for slower runtime but potentially at the cost of performance.
     row_norm: 'bool' (default: True)
         Whether to row-normalise the transition probability matrix.
+    force_no_scale: 'bool' (default:False)
+        We automatically check if the future states are too far out of distribution and down / up-scale the velocities
+        if so. Set to 'True' to stop scaling. Note that this can result in issues with the projection.
     Returns
     -------
     Matrix of future states projected onto the low-dimensional embedding.
     'np.ndarray' n_obs*d
     """
+    # check if future states are not too far out of the distribution of original states
+    percent_velo = np.max(np.abs(X_future-X_current), axis=0) / (np.max(X_current, axis=0)-np.min(X_current, axis=0))
+    if not force_no_scale:
+        # todo this can be more robust
+        # get min distance to any pt
+        if np.any(percent_velo > .2):  # too big steps
+            print("")
+            # todo
+        elif np.all(percent_velo < .01):  # probs too small steps
+            print("")
+
     # first calculate W=P^-1*Y
     # get P
     # we restrict to top k NN for speed up
