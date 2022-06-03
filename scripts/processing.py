@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def pearson_residuals(counts, theta=100):
-    '''
+    """
     Computes analytical residuals for NB model with a fixed theta,
     clipping outlier residuals to sqrt(N) as proposed in
     Lause et al. 2021 https://doi.org/10.1186/s13059-021-02451-7
@@ -17,7 +17,7 @@ def pearson_residuals(counts, theta=100):
         Matrix (dense) with cells in rows and genes in columns
     theta: `int` (default: 100)
         Gene-shared overdispersion parameter
-    '''
+    """
 
     counts_sum0 = np.sum(counts, axis=0)
     counts_sum1 = np.sum(counts, axis=1)
@@ -54,7 +54,7 @@ def get_hvgs(adata, no_of_hvgs=2000, theta=100):
     if scipy.sparse.issparse(adata.X):
         residuals = pearson_residuals(adata.X.todense(), theta)
     else:
-        residuals = pearson_residuals(adata.X.todense(), theta)
+        residuals = pearson_residuals(adata.X, theta)
 
     ### get variance of residuals
     residuals_variance = np.var(residuals, axis=0)
