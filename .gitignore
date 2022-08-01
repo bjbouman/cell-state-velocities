@@ -10,6 +10,6 @@ datasets/pancreas
 datasets/chromaffin/chromaffin*
 
 scripts/XXX*
-scripts/.ipynb_checkpoints
-scripts/__pycache__
-scripts/archived
+
+*/.ipynb_checkpoints
+*/__pycache__
