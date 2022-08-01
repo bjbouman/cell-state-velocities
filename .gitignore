@@ -1,10 +1,16 @@
 __pycache__/
 .DS_store
+.git
+.ipynb_checkpoints
 
 figures/
-datasets/
+datasets/bonemarrow
+datasets/neuralcrest
+datasets/pancreas
+datasets/chromaffin/chromaffin*
 
 scripts/XXX*
+scripts/archived
+
 */.ipynb_checkpoints
 */__pycache__
-
